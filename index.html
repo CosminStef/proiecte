@@ -97,6 +97,7 @@
 
     let projects = [];
     let expanded = new Set();
+    let firstLoad = true;
 
     // ---------- CSV ----------
     function parseCSV(text) {
@@ -177,7 +178,7 @@
       return frag;
     }
 
-    function render() {
+    function render(focusNow) {
       const ppd = pxPerDay();
       const timelineW = totalDays * ppd;
       const g = document.getElementById("gantt");
@@ -209,7 +210,7 @@
         const tg = el("button", "toggle", isOpen ? "▼" : "▶");
         tg.addEventListener("click", function () {
           if (expanded.has(p.name)) expanded.delete(p.name); else expanded.add(p.name);
-          render();
+          render(true);
         });
         label.appendChild(tg);
         label.appendChild(el("span", "pname", p.name));
@@ -244,10 +245,10 @@
         }
       });
 
-      // auto-scroll la primul proiect extins
-      if (expanded.size) {
-        const first = projects.find(p => expanded.has(p.name));
-        if (first) document.getElementById("scroll").scrollLeft = Math.max(0, dayIdx(first.start)*ppd - 16);
+      // auto-scroll pe luna curenta (la deschidere si la toggle, nu la refresh)
+      if (focusNow) {
+        const lunaCurenta = new Date(YEAR, today.getMonth(), 1);
+        document.getElementById("scroll").scrollLeft = Math.max(0, dayIdx(lunaCurenta)*ppd - 8);
       }
     }
 
@@ -258,7 +259,8 @@
         projects = buildProjects(rows);
         document.getElementById("status").style.display = projects.length ? "none" : "block";
         if (!projects.length) { document.getElementById("status").textContent = "Niciun proiect încă."; return; }
-        render();
+        render(firstLoad);
+        firstLoad = false;
         const now = new Date();
         document.getElementById("updated").textContent = "act. " + now.toLocaleTimeString("ro-RO", {hour:"2-digit", minute:"2-digit"});
       } catch (e) {
@@ -267,8 +269,8 @@
       }
     }
 
-    document.getElementById("collapseAll").addEventListener("click", function () { expanded.clear(); render(); });
-    window.addEventListener("resize", function () { if (projects.length) render(); });
+    document.getElementById("collapseAll").addEventListener("click", function () { expanded.clear(); render(true); });
+    window.addEventListener("resize", function () { if (projects.length) render(false); });
     load();
     setInterval(load, REFRESH_MS);
   </script>
