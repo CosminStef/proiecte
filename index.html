@@ -2,175 +2,273 @@
 <html lang="ro">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="theme-color" content="#1b5e20" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-title" content="Gantt Salvadent" />
   <title>Gantt — Salvadent Smart Manager</title>
-
-  <!-- frappe-gantt (CDN) -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/frappe-gantt@0.6.1/dist/frappe-gantt.css" />
-  <script src="https://cdn.jsdelivr.net/npm/frappe-gantt@0.6.1/dist/frappe-gantt.min.js"></script>
-
   <style>
-    :root { --verde: #1b5e20; }
-    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-    body {
-      margin: 0; font-family: -apple-system, "Segoe UI", Roboto, sans-serif;
-      background: #f4f6f4; color: #222;
-    }
+    :root { --verde:#1b5e20; --label-w:140px; }
+    * { box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+    body { margin:0; font-family:-apple-system,"Segoe UI",Roboto,sans-serif; background:#f4f6f4; color:#222; }
     header {
-      position: sticky; top: 0; z-index: 10;
-      background: var(--verde); color: #fff;
-      padding: 10px 14px; display: flex; align-items: center; gap: 10px;
-      box-shadow: 0 2px 6px rgba(0,0,0,.15);
+      position:sticky; top:0; z-index:20; background:var(--verde); color:#fff;
+      padding:10px 14px; display:flex; align-items:center; gap:10px;
+      box-shadow:0 2px 6px rgba(0,0,0,.15);
     }
-    header h1 { font-size: 16px; margin: 0; flex: 1; font-weight: 600; }
-    header .meta { font-size: 11px; opacity: .85; }
-    .controls {
-      display: flex; gap: 6px; padding: 8px 12px; overflow-x: auto;
-      background: #fff; border-bottom: 1px solid #e0e0e0;
+    header h1 { font-size:16px; margin:0; flex:1; font-weight:600; }
+    header .meta { font-size:11px; opacity:.85; }
+    header button {
+      border:none; background:rgba(255,255,255,.18); color:#fff;
+      border-radius:14px; padding:5px 10px; font-size:13px;
     }
-    .controls button {
-      border: 1px solid #cdd6cd; background: #fff; color: #333;
-      border-radius: 16px; padding: 5px 12px; font-size: 13px; white-space: nowrap;
-    }
-    .controls button.active { background: var(--verde); color: #fff; border-color: var(--verde); }
-    #gantt-wrap { overflow-x: auto; padding: 8px 0 40px; }
-    #status { padding: 16px; text-align: center; color: #777; font-size: 14px; }
+    #status { padding:16px; text-align:center; color:#777; font-size:14px; }
 
-    /* Culori per responsabil (clase aplicate dinamic) */
-    .bar-r0 .bar { fill: #1b5e20; } .bar-r0 .bar-progress { fill: #2e7d32; }
-    .bar-r1 .bar { fill: #1565c0; } .bar-r1 .bar-progress { fill: #1976d2; }
-    .bar-r2 .bar { fill: #c62828; } .bar-r2 .bar-progress { fill: #e53935; }
-    .bar-r3 .bar { fill: #ef6c00; } .bar-r3 .bar-progress { fill: #fb8c00; }
-    .bar-r4 .bar { fill: #6a1b9a; } .bar-r4 .bar-progress { fill: #8e24aa; }
-    .bar-r5 .bar { fill: #00838f; } .bar-r5 .bar-progress { fill: #00acc1; }
+    .scroll { overflow-x:auto; overflow-y:hidden; -webkit-overflow-scrolling:touch; background:#fff; }
+    .gantt { position:relative; width:max-content; min-width:100%; }
+
+    /* Header axa */
+    .axis-row { display:flex; position:sticky; top:0; z-index:10; background:#fff; border-bottom:1px solid #d9d9d9; }
+    .axis-row .corner {
+      position:sticky; left:0; z-index:11; width:var(--label-w); min-width:var(--label-w);
+      background:#fff; border-right:1px solid #ddd;
+    }
+    .axis { position:relative; height:100%; }
+    .tier { position:relative; }
+    .tier.months { height:24px; }
+    .tier.weeks { height:20px; border-top:1px solid #eee; }
+    .cell {
+      position:absolute; top:0; bottom:0; border-left:1px solid #ececec;
+      font-size:11px; color:#555; display:flex; align-items:center; padding-left:4px; overflow:hidden; white-space:nowrap;
+    }
+    .tier.months .cell { font-weight:600; color:#333; }
+
+    /* Randuri */
+    .row { display:flex; height:34px; align-items:center; border-bottom:1px solid #f0f0f0; }
+    .row.stage { background:#fafbfa; }
+    .label {
+      position:sticky; left:0; z-index:5; width:var(--label-w); min-width:var(--label-w);
+      background:inherit; padding:0 6px; display:flex; align-items:center; gap:5px;
+      border-right:1px solid #ddd; font-size:12.5px; height:100%;
+    }
+    .row { background:#fff; }
+    .row.stage .label { background:#fafbfa; }
+    .toggle {
+      border:none; background:#eef2ee; color:var(--verde); width:20px; min-width:20px; height:20px;
+      border-radius:5px; font-size:11px; line-height:1; cursor:pointer; display:flex; align-items:center; justify-content:center;
+    }
+    .pname { font-weight:600; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+    .sname { color:#444; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; padding-left:22px; }
+    .lane { position:relative; height:100%; flex:0 0 auto; }
+    .bar {
+      position:absolute; top:7px; height:20px; border-radius:5px; color:#fff;
+      font-size:11px; line-height:20px; padding:0 6px; overflow:hidden; white-space:nowrap;
+      box-shadow:0 1px 2px rgba(0,0,0,.2);
+    }
+    .bar.project { background:var(--verde); }
+    .today { position:absolute; top:0; bottom:0; width:2px; background:#e53935; opacity:.6; z-index:3; }
+
+    .r0 { background:#1b5e20; } .r1 { background:#1565c0; } .r2 { background:#c62828; }
+    .r3 { background:#ef6c00; } .r4 { background:#6a1b9a; } .r5 { background:#00838f; }
   </style>
 </head>
 <body>
   <header>
     <h1>📊 Gantt Salvadent</h1>
+    <button id="collapseAll">Restrânge tot</button>
     <span class="meta" id="updated">…</span>
   </header>
 
-  <div class="controls">
-    <button data-mode="Quarter Day">Oră</button>
-    <button data-mode="Day">Zi</button>
-    <button data-mode="Week" class="active">Săptămână</button>
-    <button data-mode="Month">Lună</button>
-    <button id="refresh">↻</button>
-  </div>
-
   <div id="status">Se încarcă…</div>
-  <div id="gantt-wrap"><svg id="gantt"></svg></div>
+  <div class="scroll" id="scroll"><div class="gantt" id="gantt"></div></div>
 
   <script>
-    // === CONFIG: completeaza ID-ul spreadsheet-ului dupa publicare ===
     const SPREADSHEET_ID = "1Yz-4yie7FFvST3LNTadoqpVZdexsXYQNK9r0BHsXq_E";
     const SHEET_NAME = "gantt";
-    const REFRESH_MS = 60000; // reimprospatare automata la 60s
-
+    const REFRESH_MS = 60000;
     const GVIZ_URL = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/gviz/tq?tqx=out:csv&sheet=${encodeURIComponent(SHEET_NAME)}`;
 
-    let viewMode = "Week";
-    let gantt = null;
+    const LUNI = ["Ian","Feb","Mar","Apr","Mai","Iun","Iul","Aug","Sep","Oct","Noi","Dec"];
+    const DAY = 86400000;
+    const YEAR = new Date().getFullYear();
+    const yearStart = new Date(YEAR, 0, 1);
+    const yearEnd = new Date(YEAR, 11, 31);
+    const totalDays = Math.round((yearEnd - yearStart) / DAY) + 1;
 
-    // --- CSV parser minimal (gestioneaza ghilimele) ---
+    let projects = [];
+    let expanded = new Set();
+
+    // ---------- CSV ----------
     function parseCSV(text) {
-      const rows = []; let row = []; let cur = ""; let q = false;
+      const rows = []; let row = [], cur = "", q = false;
       for (let i = 0; i < text.length; i++) {
         const c = text[i];
         if (q) {
-          if (c === '"' && text[i + 1] === '"') { cur += '"'; i++; }
-          else if (c === '"') { q = false; }
+          if (c === '"' && text[i+1] === '"') { cur += '"'; i++; }
+          else if (c === '"') q = false;
           else cur += c;
         } else {
           if (c === '"') q = true;
           else if (c === ",") { row.push(cur); cur = ""; }
           else if (c === "\n") { row.push(cur); rows.push(row); row = []; cur = ""; }
-          else if (c === "\r") { /* skip */ }
-          else cur += c;
+          else if (c !== "\r") cur += c;
         }
       }
       if (cur.length || row.length) { row.push(cur); rows.push(row); }
       return rows;
     }
+    function pd(s) { const p = (s||"").trim().split("-").map(Number); return new Date(p[0], p[1]-1, p[2]); }
+    function dayIdx(d) { return Math.round((d - yearStart) / DAY); }
 
-    function respClass(resp, map) {
-      if (!(resp in map)) map[resp] = "bar-r" + (Object.keys(map).length % 6);
-      return map[resp];
+    function buildProjects(rows) {
+      const map = new Map(); const respMap = {};
+      for (let i = 1; i < rows.length; i++) {
+        const r = rows[i];
+        if (!r[0] || !r[1] || !r[3] || !r[4]) continue;
+        const name = r[0].trim();
+        if (!map.has(name)) map.set(name, { name, stages: [], start: null, end: null });
+        const p = map.get(name);
+        const start = pd(r[3]), end = pd(r[4]);
+        const resp = (r[2]||"—").trim();
+        if (!(resp in respMap)) respMap[resp] = "r" + (Object.keys(respMap).length % 6);
+        p.stages.push({ etapa: r[1].trim(), resp, start, end, cls: respMap[resp] });
+        if (!p.start || start < p.start) p.start = start;
+        if (!p.end || end > p.end) p.end = end;
+      }
+      return [...map.values()];
     }
 
-    function buildTasks(rows) {
-      // header: Proiect, Etapa, Responsabil, Start, Sfarsit, Durata, Dependinta, Progres
-      const tasks = []; const respMap = {}; const nameToId = {};
-      for (let i = 1; i < rows.length; i++) {
-        const r = rows[i];
-        if (!r[1] || !r[3] || !r[4]) continue; // nevoie de etapa, start, sfarsit
-        const id = "t" + i;
-        nameToId[(r[0] || "") + "::" + r[1]] = id;
+    // ---------- Randare ----------
+    function pxPerDay() {
+      const avail = (window.innerWidth || 360) - parseInt(getComputedStyle(document.documentElement).getPropertyValue("--label-w"));
+      const monthPx = Math.max(2.0, avail / totalDays); // luna incape pe ecran
+      return expanded.size ? Math.max(monthPx * 4, 11) : monthPx; // saptamani = mai larg
+    }
+
+    function el(tag, cls, html) { const e = document.createElement(tag); if (cls) e.className = cls; if (html != null) e.innerHTML = html; return e; }
+
+    function monthCells(ppd) {
+      const frag = document.createDocumentFragment();
+      for (let m = 0; m < 12; m++) {
+        const s = dayIdx(new Date(YEAR, m, 1));
+        const w = new Date(YEAR, m+1, 0).getDate();
+        const c = el("div", "cell", LUNI[m]);
+        c.style.left = (s*ppd) + "px"; c.style.width = (w*ppd) + "px";
+        frag.appendChild(c);
       }
-      for (let i = 1; i < rows.length; i++) {
-        const r = rows[i];
-        if (!r[1] || !r[3] || !r[4]) continue;
-        const proiect = r[0] || "";
-        const dep = r[6] ? (nameToId[proiect + "::" + r[6]] || "") : "";
-        tasks.push({
-          id: "t" + i,
-          name: (proiect ? proiect + " · " : "") + r[1] + (r[2] ? " (" + r[2] + ")" : ""),
-          start: r[3].trim(),
-          end: r[4].trim(),
-          progress: Number(r[7]) || 0,
-          dependencies: dep,
-          custom_class: respClass(r[2] || "—", respMap)
+      return frag;
+    }
+    function weekCells(ppd) {
+      const frag = document.createDocumentFragment();
+      // prima luni pe/inainte de 1 ian
+      let d = new Date(yearStart);
+      const off = (d.getDay() + 6) % 7; // 0=luni
+      d = new Date(d.getTime() - off*DAY);
+      while (d <= yearEnd) {
+        const left = Math.max(0, dayIdx(d));
+        const right = Math.min(totalDays, dayIdx(d) + 7);
+        if (right > 0 && left < totalDays) {
+          const c = el("div", "cell", String(d.getDate()));
+          c.style.left = (left*ppd) + "px"; c.style.width = ((right-left)*ppd) + "px";
+          frag.appendChild(c);
+        }
+        d = new Date(d.getTime() + 7*DAY);
+      }
+      return frag;
+    }
+
+    function render() {
+      const ppd = pxPerDay();
+      const timelineW = totalDays * ppd;
+      const g = document.getElementById("gantt");
+      g.innerHTML = "";
+
+      // --- Axa ---
+      const axisRow = el("div", "axis-row");
+      axisRow.appendChild(el("div", "corner"));
+      const axis = el("div", "axis"); axis.style.width = timelineW + "px";
+      const months = el("div", "tier months"); months.style.width = timelineW + "px"; months.appendChild(monthCells(ppd));
+      axis.appendChild(months);
+      if (expanded.size) {
+        const weeks = el("div", "tier weeks"); weeks.style.width = timelineW + "px"; weeks.appendChild(weekCells(ppd));
+        axis.appendChild(weeks);
+      }
+      axisRow.appendChild(axis);
+      g.appendChild(axisRow);
+
+      // linia "azi"
+      const today = new Date(); today.setHours(0,0,0,0);
+      const tIdx = dayIdx(today);
+      const showToday = tIdx >= 0 && tIdx < totalDays;
+
+      // --- Randuri ---
+      projects.forEach(function (p) {
+        const isOpen = expanded.has(p.name);
+        const row = el("div", "row");
+        const label = el("div", "label");
+        const tg = el("button", "toggle", isOpen ? "▼" : "▶");
+        tg.addEventListener("click", function () {
+          if (expanded.has(p.name)) expanded.delete(p.name); else expanded.add(p.name);
+          render();
         });
-      }
-      return tasks;
-    }
+        label.appendChild(tg);
+        label.appendChild(el("span", "pname", p.name));
+        row.appendChild(label);
 
-    function render(tasks) {
-      document.getElementById("status").style.display = tasks.length ? "none" : "block";
-      if (!tasks.length) { document.getElementById("status").textContent = "Niciun proiect încă."; return; }
-      document.getElementById("gantt").innerHTML = "";
-      gantt = new Gantt("#gantt", tasks, {
-        view_mode: viewMode,
-        language: "en",
-        bar_height: 22,
-        padding: 16,
-        custom_popup_html: function (t) {
-          return `<div style="padding:8px 10px;font-size:13px">
-            <b>${t.name}</b><br>${t.start} → ${t.end}<br>Progres: ${t._progress || t.progress}%</div>`;
+        const lane = el("div", "lane"); lane.style.width = timelineW + "px";
+        if (showToday) { const tl = el("div","today"); tl.style.left = (tIdx*ppd + ppd/2) + "px"; lane.appendChild(tl); }
+        const bar = el("div", "bar project");
+        const l = dayIdx(p.start), r = dayIdx(p.end);
+        bar.style.left = (l*ppd) + "px"; bar.style.width = ((r-l+1)*ppd) + "px";
+        if (!expanded.size) bar.textContent = p.name;
+        lane.appendChild(bar);
+        row.appendChild(lane);
+        g.appendChild(row);
+
+        if (isOpen) {
+          p.stages.forEach(function (s) {
+            const sr = el("div", "row stage");
+            const sl = el("div", "label");
+            sl.appendChild(el("span", "sname", s.etapa + (s.resp ? " · " + s.resp : "")));
+            sr.appendChild(sl);
+            const slane = el("div", "lane"); slane.style.width = timelineW + "px";
+            if (showToday) { const tl = el("div","today"); tl.style.left = (tIdx*ppd + ppd/2) + "px"; slane.appendChild(tl); }
+            const sb = el("div", "bar " + s.cls);
+            const sl2 = dayIdx(s.start), sr2 = dayIdx(s.end);
+            sb.style.left = (sl2*ppd) + "px"; sb.style.width = ((sr2-sl2+1)*ppd) + "px";
+            sb.textContent = s.etapa;
+            slane.appendChild(sb);
+            sr.appendChild(slane);
+            g.appendChild(sr);
+          });
         }
       });
+
+      // auto-scroll la primul proiect extins
+      if (expanded.size) {
+        const first = projects.find(p => expanded.has(p.name));
+        if (first) document.getElementById("scroll").scrollLeft = Math.max(0, dayIdx(first.start)*ppd - 16);
+      }
     }
 
     async function load() {
       try {
         const res = await fetch(GVIZ_URL + "&_=" + Date.now());
-        const txt = await res.text();
-        const rows = parseCSV(txt);
-        render(buildTasks(rows));
+        const rows = parseCSV(await res.text());
+        projects = buildProjects(rows);
+        document.getElementById("status").style.display = projects.length ? "none" : "block";
+        if (!projects.length) { document.getElementById("status").textContent = "Niciun proiect încă."; return; }
+        render();
         const now = new Date();
-        document.getElementById("updated").textContent =
-          "act. " + now.toLocaleTimeString("ro-RO", { hour: "2-digit", minute: "2-digit" });
+        document.getElementById("updated").textContent = "act. " + now.toLocaleTimeString("ro-RO", {hour:"2-digit", minute:"2-digit"});
       } catch (e) {
         document.getElementById("status").style.display = "block";
         document.getElementById("status").textContent = "Eroare la încărcare: " + e.message;
       }
     }
 
-    // Butoane view mode
-    document.querySelectorAll(".controls button[data-mode]").forEach(function (b) {
-      b.addEventListener("click", function () {
-        document.querySelectorAll(".controls button[data-mode]").forEach(x => x.classList.remove("active"));
-        b.classList.add("active");
-        viewMode = b.dataset.mode;
-        if (gantt) gantt.change_view_mode(viewMode);
-      });
-    });
-    document.getElementById("refresh").addEventListener("click", load);
-
+    document.getElementById("collapseAll").addEventListener("click", function () { expanded.clear(); render(); });
+    window.addEventListener("resize", function () { if (projects.length) render(); });
     load();
     setInterval(load, REFRESH_MS);
   </script>
