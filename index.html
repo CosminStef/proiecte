@@ -41,7 +41,12 @@
       position:absolute; top:0; bottom:0; border-left:1px solid #ececec;
       font-size:11px; color:#555; display:flex; align-items:center; padding-left:4px; overflow:hidden; white-space:nowrap;
     }
+    .cell.b { background:rgba(0,0,0,.05); }
     .tier.months .cell { font-weight:600; color:#333; }
+
+    /* Benzi alternante alb / gri deschis pe coloane */
+    .stripe { position:absolute; top:0; bottom:0; z-index:0; }
+    .stripe.b { background:rgba(0,0,0,.05); }
 
     /* Randuri */
     .row { display:flex; min-height:36px; align-items:stretch; border-bottom:1px solid #f0f0f0; background:#fff; }
@@ -62,7 +67,7 @@
     .bar {
       position:absolute; top:50%; transform:translateY(-50%); height:20px; border-radius:5px; color:#fff;
       font-size:11px; line-height:20px; padding:0 6px; overflow:hidden; white-space:nowrap;
-      box-shadow:0 1px 2px rgba(0,0,0,.2);
+      box-shadow:0 1px 2px rgba(0,0,0,.2); z-index:2;
     }
     .bar.project { background:var(--verde); }
     .today { position:absolute; top:0; bottom:0; width:2px; background:#e53935; opacity:.6; z-index:3; }
@@ -147,12 +152,35 @@
 
     function el(tag, cls, html) { const e = document.createElement(tag); if (cls) e.className = cls; if (html != null) e.innerHTML = html; return e; }
 
+    // Lista coloanelor (luni in overview, saptamani in extins) cu paritate b=1/0
+    function columnRanges(ppd) {
+      const out = [];
+      if (expanded.size) {
+        let d = new Date(yearStart);
+        const off = (d.getDay() + 6) % 7; // 0=luni
+        d = new Date(d.getTime() - off*DAY);
+        let k = 0;
+        while (d <= yearEnd) {
+          const left = Math.max(0, dayIdx(d));
+          const right = Math.min(totalDays, dayIdx(d) + 7);
+          if (right > 0 && left < totalDays) out.push({ left:left*ppd, width:(right-left)*ppd, b:k%2, label:String(d.getDate()) });
+          d = new Date(d.getTime() + 7*DAY); k++;
+        }
+      } else {
+        for (let m = 0; m < 12; m++) {
+          const s = dayIdx(new Date(YEAR, m, 1));
+          const w = new Date(YEAR, m+1, 0).getDate();
+          out.push({ left:s*ppd, width:w*ppd, b:m%2, label:LUNI[m] });
+        }
+      }
+      return out;
+    }
     function monthCells(ppd) {
       const frag = document.createDocumentFragment();
       for (let m = 0; m < 12; m++) {
         const s = dayIdx(new Date(YEAR, m, 1));
         const w = new Date(YEAR, m+1, 0).getDate();
-        const c = el("div", "cell", LUNI[m]);
+        const c = el("div", "cell" + (m%2 ? " b" : ""), LUNI[m]);
         c.style.left = (s*ppd) + "px"; c.style.width = (w*ppd) + "px";
         frag.appendChild(c);
       }
@@ -160,20 +188,21 @@
     }
     function weekCells(ppd) {
       const frag = document.createDocumentFragment();
-      // prima luni pe/inainte de 1 ian
-      let d = new Date(yearStart);
-      const off = (d.getDay() + 6) % 7; // 0=luni
-      d = new Date(d.getTime() - off*DAY);
-      while (d <= yearEnd) {
-        const left = Math.max(0, dayIdx(d));
-        const right = Math.min(totalDays, dayIdx(d) + 7);
-        if (right > 0 && left < totalDays) {
-          const c = el("div", "cell", String(d.getDate()));
-          c.style.left = (left*ppd) + "px"; c.style.width = ((right-left)*ppd) + "px";
-          frag.appendChild(c);
-        }
-        d = new Date(d.getTime() + 7*DAY);
-      }
+      columnRanges(ppd).forEach(function (c) {
+        const cell = el("div", "cell" + (c.b ? " b" : ""), c.label);
+        cell.style.left = c.left + "px"; cell.style.width = c.width + "px";
+        frag.appendChild(cell);
+      });
+      return frag;
+    }
+    function stripesFrag(ppd) {
+      const frag = document.createDocumentFragment();
+      columnRanges(ppd).forEach(function (c) {
+        if (!c.b) return; // doar coloanele gri; restul raman albe
+        const s = el("div", "stripe b");
+        s.style.left = c.left + "px"; s.style.width = c.width + "px";
+        frag.appendChild(s);
+      });
       return frag;
     }
 
@@ -216,6 +245,7 @@
         row.appendChild(label);
 
         const lane = el("div", "lane"); lane.style.width = timelineW + "px";
+        lane.appendChild(stripesFrag(ppd));
         if (showToday) { const tl = el("div","today"); tl.style.left = (tIdx*ppd + ppd/2) + "px"; lane.appendChild(tl); }
         const bar = el("div", "bar project");
         const l = dayIdx(p.start), r = dayIdx(p.end);
@@ -232,6 +262,7 @@
             sl.appendChild(el("span", "sname", s.etapa + (s.resp ? " · " + s.resp : "")));
             sr.appendChild(sl);
             const slane = el("div", "lane"); slane.style.width = timelineW + "px";
+            slane.appendChild(stripesFrag(ppd));
             if (showToday) { const tl = el("div","today"); tl.style.left = (tIdx*ppd + ppd/2) + "px"; slane.appendChild(tl); }
             const sb = el("div", "bar " + s.cls);
             const sl2 = dayIdx(s.start), sr2 = dayIdx(s.end);
