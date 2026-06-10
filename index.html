@@ -1,218 +1,178 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="ro">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Proiecte</title>
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="apple-mobile-web-app-title" content="Proiecte">
-<meta name="theme-color" content="#2563eb">
-<link rel="apple-touch-icon" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAALQAAAC0CAYAAAA9zQYyAAAEi0lEQVR4nO3cP3IjRRjG4ZaLjNhVpAQOCInhBFyAA/gKHIMr+ABcgBNATEjggJSqjUnxBi677LX+zGha6m/eeZ585Xb3z9+2ZMm7VsTd/aen0WvgfI8Pt7vRa2ittWGLEHC2UYFf9YuKeJuuGffFv5CIeevScV/swYXMMZcKu/uDCpk5eod90/PBxMxcvZvp8tMhZHroMa0XT2gx00uPlhYFLWZ6W9rUWSNeyFzDOVeQ2RNazFzLOa3NClrMXNvc5iYHLWZGmdNe19ehYbRJQZvOjDa1wZNBi5kqprR4NGgxU82pJt2hiXIwaNOZqo61uTdoMVPdoUZdOYjyIWjTmbXY16oJTZR3QZvOrM2XzZrQRBE0UV6Ddt1grd62a0ITRdBEuWnNdYP1e2nYhCaKoIkiaKLs3J9JYkITRdBEETRRBE0UQRNF0EQRNFG+Gr2AqX7+289eVb999//oJbxaRSVirq3S+dRZyQGVNovDqpxTjVUcUGWTmKbCeY1fwQEVNof5Rp+baogiaKIImiiCJoqgiaKIImiqCJImiiqCJoqgirOZX3/9+/zB6CeV989f96CUMt4oJLeZp7NMKgnZI82x9v0oHvfXDOdeW961s0Fs+lB62un9lg4ZzCJoogiaKoIkiaKIImiiCJoqgiSJoogiaKIImiqCJUjZob1ZfZqv7Vzbo1rZ7KEtted9KB93atg/nHFvfr/JBt+aQprJPre3u/r8tjV4E9LKKCQ1TCZoogiaKoIkiaKIImiiCJoqgiSJoogiaKKv5+9B//vft6CVwAT98/U/Xx1vFhBZzrt5nWz5oMefrecalgxbzdvQ667JBi3l7epx52aDhHIImiqCJImiiCJoogiaKoIkiaKIImiiCJoqgiSJoopQNuvcbv6mvx5mXDbo1UW9Jr7MuHXRrot6CnmdcPujWRJ2s99mu5kOyomaKVUxomErQRBE0UQRNFEETRdBEETRRBE0UQRNF0ERZza++f//j19FLGOanH38ZvYTVWMWE3nLMrfn+5ygftMN8Zh+mKR20Q3zPfpxWNmiHt599Oa5s0HAOQRNF0ES5eXy43Y1eBPTw+HC7M6GJImiiCJooN6093z1GLwSWeGnYhCaKoInyGrRrB2v1tl0Tmihlg/am9v3sy3Hvgq527XB479mPj75stuyEfuEQn9mHaT4EXW1Kt+Ywt/79H7Kv1dV8SNahMsXeK0fFKQ1vHWr04B1a1FR1rM3yTwphjqNBm9JUc6rJkxNa1FQxpcVJVw5RM9rUBt2hiTI5aFOaUea0N2tCi5prm9vc7CuHqLmWc1pbFOfd/aenJf8e9lkyNBc9KTSt6W1pU4tf5RA1vfRoqWuMriCco+dQ7Po6tGnNXL2buViApjXHXGr4XXyiCpu3Lv2/+FWvCOLepmteRYfdecWdbdTzqTJP4gS+blVeEPgMM6UtZA4nAkMAAAAASUVORK5CYII=">
-<style>
-:root { color-scheme: light; }
-* { box-sizing: border-box; }
-body { margin: 0; background: #f6f7f9; color: #1a1d21;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; font-size: 14px; }
-.wrap { max-width: 1100px; margin: 0 auto; padding: 20px 18px 60px; }
-header.top { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; margin-bottom: 14px; }
-h1 { font-size: 20px; margin: 0; font-weight: 700; }
-.sub { color: #6b7280; font-size: 13px; }
-.overview { background: #fff; border: 1px solid #e5e7eb; border-radius: 14px; padding: 14px 16px 16px; }
-.ovhead { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; flex-wrap: wrap; }
-.ovhead h2 { font-size: 15px; margin: 0; }
-.ruler { display: flex; margin-left: var(--labw); border-bottom: 1px solid #e5e7eb; position: relative; }
-.ruler .m { flex: 1 1 0; font-size: 10.5px; color: #6b7280; font-weight: 600; text-align: center; padding: 2px 0; border-left: 1px solid #eef0f3; text-transform: uppercase; }
-.proj { border-top: 1px solid #eef0f3; }
-.proj:first-of-type { border-top: 0; }
-.phead { display: flex; align-items: center; gap: 8px; padding: 9px 0; cursor: pointer; }
-.arrow { flex: 0 0 22px; width: 22px; height: 22px; display: flex; align-items: center; justify-content: center; border-radius: 6px; color: #4b5563; transition: transform .15s; font-size: 12px; }
-.proj.open .arrow { transform: rotate(180deg); }
-.phead:hover .arrow { background: #eef2ff; color: #2563eb; }
-.pname { flex: 0 0 calc(var(--labw) - 30px); font-weight: 600; font-size: 13.5px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.pname small { display: block; font-weight: 500; color: #9ca3af; font-size: 11px; }
-.ovtrack { position: relative; flex: 1 1 auto; height: 24px; border-left: 1px solid #eef0f3; }
-.ovbar { position: absolute; top: 3px; height: 18px; border-radius: 6px; color: #fff; font-size: 10px; font-weight: 600; display: flex; align-items: center; padding: 0 7px; white-space: nowrap; overflow: hidden; }
-.vline { position: absolute; top: 0; bottom: 0; width: 0; }
-.vtoday { border-left: 2px solid #f59e0b; }
-.vdl { border-left: 2px dashed #dc2626; }
-.pbody { display: none; padding: 4px 0 16px; }
-.proj.open .pbody { display: block; }
-.note { background: #fff7ed; border: 1px solid #fed7aa; color: #9a3412; border-radius: 10px; padding: 9px 12px; font-size: 12px; margin: 4px 0 12px; line-height: 1.5; }
-.note b { color: #7c2d12; }
-.scroll { overflow-x: auto; padding-bottom: 6px; }
-.gantt { position: relative; }
-.months { display: flex; margin-left: var(--dlab); border-bottom: 1px solid #e5e7eb; }
-.month { font-size: 11px; color: #6b7280; font-weight: 600; padding: 2px 6px; border-left: 1px solid #eef0f3; text-transform: uppercase; letter-spacing: .04em; }
-.row { display: flex; align-items: center; height: 32px; }
-.row:nth-child(even) .track { background: #fafbfc; }
-.label { width: var(--dlab); flex: 0 0 var(--dlab); font-size: 12px; padding-right: 10px; color: #374151; display: flex; align-items: center; gap: 6px; }
-.dot { width: 7px; height: 7px; border-radius: 50%; flex: 0 0 auto; }
-.track { position: relative; height: 100%; flex: 1 1 auto; border-left: 1px solid #eef0f3; }
-.bar { position: absolute; top: 6px; height: 20px; border-radius: 6px; display: flex; align-items: center; padding: 0 8px; font-size: 11px; font-weight: 600; color: #fff; white-space: nowrap; overflow: hidden; gap: 4px; }
-.bar .st { font-size: 10px; }
-.bar.in_progress { box-shadow: inset 0 0 0 2px rgba(255,255,255,.6); }
-.bar.critical { outline: 2px dashed #b91c1c; outline-offset: 1px; }
-.flag { position: absolute; top: -15px; transform: translateX(-50%); font-size: 10px; font-weight: 700; padding: 1px 6px; border-radius: 5px; white-space: nowrap; z-index: 6; }
-.flag.today { background: #fef3c7; color: #92400e; border: 1px solid #f59e0b; }
-.flag.dl { background: #fee2e2; color: #991b1b; border: 1px solid #dc2626; }
-.legend { display: flex; gap: 14px; flex-wrap: wrap; font-size: 11.5px; color: #4b5563; margin-top: 10px; align-items: center; }
-.legend span { display: inline-flex; align-items: center; gap: 5px; }
-.sw { width: 15px; height: 11px; border-radius: 3px; display: inline-block; }
-footer { color: #9ca3af; font-size: 11.5px; text-align: center; margin-top: 14px; }
-.status { font-size: 12px; color: #9ca3af; }
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="theme-color" content="#1b5e20" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-title" content="Gantt Salvadent" />
+  <title>Gantt — Salvadent Smart Manager</title>
+
+  <!-- frappe-gantt (CDN) -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/frappe-gantt@0.6.1/dist/frappe-gantt.css" />
+  <script src="https://cdn.jsdelivr.net/npm/frappe-gantt@0.6.1/dist/frappe-gantt.min.js"></script>
+
+  <style>
+    :root { --verde: #1b5e20; }
+    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+    body {
+      margin: 0; font-family: -apple-system, "Segoe UI", Roboto, sans-serif;
+      background: #f4f6f4; color: #222;
+    }
+    header {
+      position: sticky; top: 0; z-index: 10;
+      background: var(--verde); color: #fff;
+      padding: 10px 14px; display: flex; align-items: center; gap: 10px;
+      box-shadow: 0 2px 6px rgba(0,0,0,.15);
+    }
+    header h1 { font-size: 16px; margin: 0; flex: 1; font-weight: 600; }
+    header .meta { font-size: 11px; opacity: .85; }
+    .controls {
+      display: flex; gap: 6px; padding: 8px 12px; overflow-x: auto;
+      background: #fff; border-bottom: 1px solid #e0e0e0;
+    }
+    .controls button {
+      border: 1px solid #cdd6cd; background: #fff; color: #333;
+      border-radius: 16px; padding: 5px 12px; font-size: 13px; white-space: nowrap;
+    }
+    .controls button.active { background: var(--verde); color: #fff; border-color: var(--verde); }
+    #gantt-wrap { overflow-x: auto; padding: 8px 0 40px; }
+    #status { padding: 16px; text-align: center; color: #777; font-size: 14px; }
+
+    /* Culori per responsabil (clase aplicate dinamic) */
+    .bar-r0 .bar { fill: #1b5e20; } .bar-r0 .bar-progress { fill: #2e7d32; }
+    .bar-r1 .bar { fill: #1565c0; } .bar-r1 .bar-progress { fill: #1976d2; }
+    .bar-r2 .bar { fill: #c62828; } .bar-r2 .bar-progress { fill: #e53935; }
+    .bar-r3 .bar { fill: #ef6c00; } .bar-r3 .bar-progress { fill: #fb8c00; }
+    .bar-r4 .bar { fill: #6a1b9a; } .bar-r4 .bar-progress { fill: #8e24aa; }
+    .bar-r5 .bar { fill: #00838f; } .bar-r5 .bar-progress { fill: #00acc1; }
+  </style>
 </head>
 <body>
-<div class="wrap">
-  <header class="top">
-    <h1>Project Management</h1>
-    <span class="sub" id="updated"></span>
+  <header>
+    <h1>📊 Gantt Salvadent</h1>
+    <span class="meta" id="updated">…</span>
   </header>
-  <div class="overview" style="--labw:230px;">
-    <div class="ovhead"><h2>Toate proiectele — <span id="yearlbl"></span></h2><span class="sub">apasă pe ▾ ca să desfaci un proiect</span></div>
-    <div class="ruler" id="ruler"></div>
-    <div id="projects"></div>
+
+  <div class="controls">
+    <button data-mode="Quarter Day">Oră</button>
+    <button data-mode="Day">Zi</button>
+    <button data-mode="Week" class="active">Săptămână</button>
+    <button data-mode="Month">Lună</button>
+    <button id="refresh">↻</button>
   </div>
-  <footer class="status" id="footer">se încarcă…</footer>
-</div>
 
-<script>
-/* ================== CONFIG ================== */
-// Link-ul punții Apps Script (se termină în /exec). Îl completez eu după ce-l deployezi.
-const BRIDGE_URL = "https://script.google.com/macros/s/AKfycbyntnnTpabaURY9roJGCa3pZrM-68d8zteEz9sDD9Jc2BRA7GCQ2MQjDXOnJIXqoxz_QQ/exec";
+  <div id="status">Se încarcă…</div>
+  <div id="gantt-wrap"><svg id="gantt"></svg></div>
 
-/* date de rezervă (dacă puntea nu răspunde) */
-const FALLBACK = {
-  "updatedAt": "2026-06-07", "year": 2026,
-  "projects": [{
-    "id": "casa", "name": "Construcție casă", "color": "#2563eb",
-    "deadline": "2026-09-30", "deadlineLabel": "Mutare",
-    "stages": [
-      { "name": "Glet interior", "start": "2026-06-08", "end": "2026-06-21", "status": "in_progress", "note": "în curs" },
-      { "name": "Rigips", "start": "2026-06-22", "end": "2026-06-28", "status": "planned" },
-      { "name": "Văr (zugrăvit)", "start": "2026-06-29", "end": "2026-07-12", "status": "planned" },
-      { "name": "Parchet", "start": "2026-07-13", "end": "2026-07-19", "status": "planned" },
-      { "name": "Mobilier general", "start": "2026-07-20", "end": "2026-08-23", "status": "planned" },
-      { "name": "Bucătărie (producție + montaj)", "start": "2026-06-30", "end": "2026-09-30", "status": "planned", "critical": true, "note": "3 luni — comandă acum" }
-    ]
-  }]
-};
+  <script>
+    // === CONFIG: completeaza ID-ul spreadsheet-ului dupa publicare ===
+    const SPREADSHEET_ID = "1Yz-4yie7FFvST3LNTadoqpVZdexsXYQNK9r0BHsXq_E";
+    const SHEET_NAME = "gantt";
+    const REFRESH_MS = 60000; // reimprospatare automata la 60s
 
-const DAY = 86400000, PXD = 7, DLAB = 180;
-const PALETTE = ["#2563eb","#7c3aed","#0d9488","#ea580c","#db2777","#65a30d","#0891b2","#ca8a04","#9333ea","#16a34a"];
-const STATUS = { in_progress:"●", done:"✓", planned:"" };
-const MONTHS = ["Ian","Feb","Mar","Apr","Mai","Iun","Iul","Aug","Sep","Oct","Noi","Dec"];
-const d = s => new Date(s + "T00:00:00");
-const days = (a,b) => Math.round((d(b)-d(a))/DAY);
-const fmt = s => d(s).toLocaleDateString("ro-RO",{day:"numeric",month:"short"});
-function todayStr(){ const t=new Date(); return t.getFullYear()+"-"+String(t.getMonth()+1).padStart(2,"0")+"-"+String(t.getDate()).padStart(2,"0"); }
+    const GVIZ_URL = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/gviz/tq?tqx=out:csv&sheet=${encodeURIComponent(SHEET_NAME)}`;
 
-function build(DATA){
-  const TODAY = todayStr();
-  const year = DATA.year || new Date().getFullYear();
-  document.getElementById("yearlbl").textContent = year;
-  document.getElementById("updated").textContent = DATA.updatedAt ? ("actualizat " + fmt(DATA.updatedAt)) : "";
-  const Y0 = year + "-01-01", Y1 = (year+1) + "-01-01", YDAYS = days(Y0, Y1);
-  const pct = s => days(Y0, s) / YDAYS * 100;
+    let viewMode = "Week";
+    let gantt = null;
 
-  document.getElementById("ruler").style.setProperty("--labw","230px");
-  document.getElementById("ruler").innerHTML = MONTHS.map(m=>`<div class="m">${m}</div>`).join("");
+    // --- CSV parser minimal (gestioneaza ghilimele) ---
+    function parseCSV(text) {
+      const rows = []; let row = []; let cur = ""; let q = false;
+      for (let i = 0; i < text.length; i++) {
+        const c = text[i];
+        if (q) {
+          if (c === '"' && text[i + 1] === '"') { cur += '"'; i++; }
+          else if (c === '"') { q = false; }
+          else cur += c;
+        } else {
+          if (c === '"') q = true;
+          else if (c === ",") { row.push(cur); cur = ""; }
+          else if (c === "\n") { row.push(cur); rows.push(row); row = []; cur = ""; }
+          else if (c === "\r") { /* skip */ }
+          else cur += c;
+        }
+      }
+      if (cur.length || row.length) { row.push(cur); rows.push(row); }
+      return rows;
+    }
 
-  const host = document.getElementById("projects");
-  host.innerHTML = "";
-  (DATA.projects||[]).forEach(p => {
-    const ps = p.stages.reduce((m,s)=> d(s.start)<d(m)?s.start:m, p.stages[0].start);
-    const ovLeft = pct(ps), ovW = pct(p.deadline) - ovLeft;
-    const todayPct = pct(TODAY), dlPct = pct(p.deadline);
-    const el = document.createElement("div");
-    el.className = "proj";
-    el.innerHTML = `
-      <div class="phead">
-        <div class="arrow">▾</div>
-        <div class="pname">${p.name}<small>deadline ${p.deadlineLabel||""}: ${fmt(p.deadline)}</small></div>
-        <div class="ovtrack">
-          <div class="ovbar" style="left:${ovLeft}%;width:${ovW}%;background:${p.color}">${fmt(ps)} → ${fmt(p.deadline)}</div>
-          <div class="vline vtoday" style="left:${todayPct}%"></div>
-          <div class="vline vdl" style="left:${dlPct}%"></div>
-        </div>
-      </div>
-      <div class="pbody"></div>`;
-    el.querySelector(".phead").addEventListener("click", ()=> el.classList.toggle("open"));
-    el.querySelector(".pbody").appendChild(detailGantt(p, TODAY));
-    host.appendChild(el);
-  });
-  document.getElementById("footer").textContent = "Sursă: proiecte.json (Google Drive) · estimările se confirmă pe parcurs";
-}
+    function respClass(resp, map) {
+      if (!(resp in map)) map[resp] = "bar-r" + (Object.keys(map).length % 6);
+      return map[resp];
+    }
 
-function detailGantt(p, TODAY){
-  let min=p.stages[0].start, max=p.stages[0].end;
-  p.stages.forEach(s=>{ if(d(s.start)<d(min))min=s.start; if(d(s.end)>d(max))max=s.end; });
-  if(d(p.deadline)>d(max)) max=p.deadline;
-  const a=d(min); a.setDate(1);
-  const b=d(max); b.setMonth(b.getMonth()+1,1);
-  const rs=a.toISOString().slice(0,10), re=b.toISOString().slice(0,10);
-  const total=days(rs,re), width=total*PXD;
-  let cols=[], c=d(rs);
-  while(c<d(re)){
-    const nx=new Date(c); nx.setMonth(c.getMonth()+1,1);
-    const w=Math.round((Math.min(nx,d(re))-c)/DAY)*PXD;
-    cols.push({label:c.toLocaleDateString("ro-RO",{month:"short",year:"2-digit"}), w});
-    c=nx;
-  }
-  const todayX=days(rs,TODAY)*PXD, dlX=days(rs,p.deadline)*PXD;
-  const box=document.createElement("div");
-  const crit=p.stages.find(s=>s.critical);
-  box.innerHTML = `
-    ${crit ? `<div class="note">⚠️ <b>Cale critică:</b> „${crit.name}" se termină pe ${fmt(p.deadline)}. Comandă din timp — orice întârziere mută data de ${(p.deadlineLabel||'final').toLowerCase()}.</div>` : ""}
-    <div class="scroll"><div class="gantt" style="--dlab:${DLAB}px; width:${DLAB+width}px;">
-      <div class="months">${cols.map(c=>`<div class="month" style="width:${c.w}px">${c.label}</div>`).join("")}</div>
-      <div class="rows"></div>
-    </div></div>
-    <div class="legend">
-      <span>Fiecare etapă are culoarea ei.</span>
-      <span><i class="sw" style="box-shadow:inset 0 0 0 2px rgba(0,0,0,.25);background:#9aa0a6"></i> ● în curs</span>
-      <span><i class="sw" style="outline:2px dashed #b91c1c;outline-offset:-2px;background:#9aa0a6"></i> critic</span>
-      <span>✓ gata</span>
-      <span><i class="sw" style="border-left:2px solid #f59e0b;width:2px;border-radius:0"></i> azi</span>
-      <span><i class="sw" style="border-left:2px dashed #dc2626;width:2px;border-radius:0"></i> deadline</span>
-    </div>`;
-  const rows=box.querySelector(".rows");
-  p.stages.forEach((s,i)=>{
-    const col=PALETTE[i % PALETTE.length];
-    const x=days(rs,s.start)*PXD, w=Math.max(days(s.start,s.end)*PXD,18);
-    const cls=(s.status==="in_progress"?"in_progress ":"")+(s.critical?"critical":"");
-    const sym=STATUS[s.status]||"";
-    const row=document.createElement("div"); row.className="row";
-    row.innerHTML=`
-      <div class="label"><span class="dot" style="background:${col}"></span>${s.name}</div>
-      <div class="track">
-        <div class="bar ${cls}" style="left:${x}px;width:${w}px;background:${col}" title="${fmt(s.start)} – ${fmt(s.end)}${s.note?' · '+s.note:''}">${sym?`<span class="st">${sym}</span>`:""}${fmt(s.start)} – ${fmt(s.end)}</div>
-      </div>`;
-    rows.appendChild(row);
-  });
-  const ov=document.createElement("div");
-  ov.style.cssText=`position:absolute;left:${DLAB}px;top:22px;bottom:0;width:${width}px;pointer-events:none`;
-  ov.innerHTML=`
-    <div class="vline vtoday" style="left:${todayX}px"><span class="flag today" style="left:${todayX}px">AZI</span></div>
-    <div class="vline vdl" style="left:${dlX}px"><span class="flag dl" style="left:${dlX}px">${p.deadlineLabel||""} ${fmt(p.deadline)}</span></div>`;
-  box.querySelector(".gantt").appendChild(ov);
-  return box;
-}
+    function buildTasks(rows) {
+      // header: Proiect, Etapa, Responsabil, Start, Sfarsit, Durata, Dependinta, Progres
+      const tasks = []; const respMap = {}; const nameToId = {};
+      for (let i = 1; i < rows.length; i++) {
+        const r = rows[i];
+        if (!r[1] || !r[3] || !r[4]) continue; // nevoie de etapa, start, sfarsit
+        const id = "t" + i;
+        nameToId[(r[0] || "") + "::" + r[1]] = id;
+      }
+      for (let i = 1; i < rows.length; i++) {
+        const r = rows[i];
+        if (!r[1] || !r[3] || !r[4]) continue;
+        const proiect = r[0] || "";
+        const dep = r[6] ? (nameToId[proiect + "::" + r[6]] || "") : "";
+        tasks.push({
+          id: "t" + i,
+          name: (proiect ? proiect + " · " : "") + r[1] + (r[2] ? " (" + r[2] + ")" : ""),
+          start: r[3].trim(),
+          end: r[4].trim(),
+          progress: Number(r[7]) || 0,
+          dependencies: dep,
+          custom_class: respClass(r[2] || "—", respMap)
+        });
+      }
+      return tasks;
+    }
 
-/* ================== ÎNCĂRCARE DATE ================== */
-function init(){
-  if (BRIDGE_URL && BRIDGE_URL.indexOf("http") === 0) {
-    fetch(BRIDGE_URL, { cache: "no-store" })
-      .then(r => r.json())
-      .then(data => build(data))
-      .catch(() => { build(FALLBACK); });
-  } else {
-    build(FALLBACK);
-  }
-}
-init();
-</script>
+    function render(tasks) {
+      document.getElementById("status").style.display = tasks.length ? "none" : "block";
+      if (!tasks.length) { document.getElementById("status").textContent = "Niciun proiect încă."; return; }
+      document.getElementById("gantt").innerHTML = "";
+      gantt = new Gantt("#gantt", tasks, {
+        view_mode: viewMode,
+        language: "ro",
+        bar_height: 22,
+        padding: 16,
+        custom_popup_html: function (t) {
+          return `<div style="padding:8px 10px;font-size:13px">
+            <b>${t.name}</b><br>${t.start} → ${t.end}<br>Progres: ${t._progress || t.progress}%</div>`;
+        }
+      });
+    }
+
+    async function load() {
+      try {
+        const res = await fetch(GVIZ_URL + "&_=" + Date.now());
+        const txt = await res.text();
+        const rows = parseCSV(txt);
+        render(buildTasks(rows));
+        const now = new Date();
+        document.getElementById("updated").textContent =
+          "act. " + now.toLocaleTimeString("ro-RO", { hour: "2-digit", minute: "2-digit" });
+      } catch (e) {
+        document.getElementById("status").style.display = "block";
+        document.getElementById("status").textContent = "Eroare la încărcare: " + e.message;
+      }
+    }
+
+    // Butoane view mode
+    document.querySelectorAll(".controls button[data-mode]").forEach(function (b) {
+      b.addEventListener("click", function () {
+        document.querySelectorAll(".controls button[data-mode]").forEach(x => x.classList.remove("active"));
+        b.classList.add("active");
+        viewMode = b.dataset.mode;
+        if (gantt) gantt.change_view_mode(viewMode);
+      });
+    });
+    document.getElementById("refresh").addEventListener("click", load);
+
+    load();
+    setInterval(load, REFRESH_MS);
+  </script>
 </body>
 </html>
