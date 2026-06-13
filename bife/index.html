@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<title>Bife — Smart Manager</title>
+<style>
+  :root { --verde:#1b5e20; --rosu:#c62828; --gri:#6b7280; --linie:#e5e7eb; }
+  * { box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  body { margin:0; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+         background:#f4f6f4; color:#111; padding-bottom:96px; }
+  header { background:var(--verde); color:#fff; padding:18px 16px; position:sticky; top:0; z-index:5; }
+  header h1 { margin:0; font-size:1.15rem; font-weight:600; }
+  header .sub { opacity:.85; font-size:.85rem; margin-top:2px; }
+  .wrap { max-width:640px; margin:0 auto; padding:12px 12px 0; }
+  .task { background:#fff; border:1px solid var(--linie); border-radius:12px; padding:12px 14px; margin:10px 0; }
+  .task .titlu { font-weight:600; font-size:1rem; }
+  .task .meta { color:var(--gri); font-size:.82rem; margin-top:2px; }
+  .toggle { display:flex; gap:8px; margin-top:10px; }
+  .toggle button { flex:1; padding:9px 0; border:1.5px solid var(--linie); background:#fff; color:var(--gri);
+                   border-radius:9px; font-size:.9rem; font-weight:600; cursor:pointer; }
+  .toggle button.facut.on  { background:var(--verde); border-color:var(--verde); color:#fff; }
+  .toggle button.nefacut.on{ background:var(--rosu);  border-color:var(--rosu);  color:#fff; }
+  .nota { margin-top:8px; width:100%; border:1px solid var(--linie); border-radius:8px; padding:8px;
+          font-size:.88rem; font-family:inherit; }
+  .bara { position:fixed; bottom:0; left:0; right:0; background:#fff; border-top:1px solid var(--linie);
+          padding:12px 16px calc(12px + env(safe-area-inset-bottom)); }
+  .bara .inner { max-width:640px; margin:0 auto; }
+  #trimite { width:100%; padding:14px; border:0; border-radius:11px; background:var(--verde); color:#fff;
+             font-size:1rem; font-weight:700; cursor:pointer; }
+  #trimite:disabled { background:#9ca3af; cursor:not-allowed; }
+  #status { text-align:center; color:var(--gri); font-size:.8rem; margin-top:6px; min-height:1em; }
+  .gol, .eroare { text-align:center; color:var(--gri); padding:40px 16px; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Bife — <span id="ziTitlu">…</span></h1>
+  <div class="sub">Alege Făcut / Nefăcut pentru fiecare task, apoi Trimite.</div>
+</header>
+
+<div class="wrap" id="lista"><div class="gol">Se încarcă…</div></div>
+
+<div class="bara"><div class="inner">
+  <button id="trimite" disabled>Trimite</button>
+  <div id="status"></div>
+</div></div>
+
+<script>
+  // ----- CONFIG -----
+  const SPREADSHEET_ID = '1Yz-4yie7FFvST3LNTadoqpVZdexsXYQNK9r0BHsXq_E';
+  const BIFAJE_GID = '1075693790';
+  // Dupa deploy-ul Apps Script (Web app -> /exec) pune URL-ul aici:
+  const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzcr8bjpWeRc-PUKu0qVNZr4EjdsKyfBeLsYqG8ib8Ad0m9YCFnD90edm6b4ZaUo9j0nA/exec';
+
+  const ZILE = ['Duminică','Luni','Marți','Miercuri','Joi','Vineri','Sâmbătă'];
+  const LUNI = ['ian','feb','mar','apr','mai','iun','iul','aug','sep','oct','nov','dec'];
+  const BULINA = { 'Urgent':'🔴', 'Mediu':'🟠', 'Mic':'🟡' };
+
+  const params = new URLSearchParams(location.search);
+  const dataStr = params.get('d') || new Date().toISOString().slice(0,10);
+  let taskuri = []; // {proiect, task, prioritate, raspuns: 1|0|null, nota}
+
+  function titluZi() {
+    const p = dataStr.split('-');
+    const d = new Date(+p[0], +p[1]-1, +p[2]);
+    document.getElementById('ziTitlu').textContent = ZILE[d.getDay()] + ', ' + d.getDate() + ' ' + LUNI[d.getMonth()];
+  }
+
+  function gvizUrl() {
+    const q = "select C,D,E,I,J where A = '" + dataStr + "'";
+    return 'https://docs.google.com/spreadsheets/d/' + SPREADSHEET_ID + '/gviz/tq?gid=' +
+           BIFAJE_GID + '&tqx=out:json&tq=' + encodeURIComponent(q);
+  }
+
+  async function incarca() {
+    titluZi();
+    try {
+      const r = await fetch(gvizUrl());
+      const t = await r.text();
+      const json = JSON.parse(t.substring(t.indexOf('{'), t.lastIndexOf('}') + 1));
+      const rows = (json.table.rows || []);
+      taskuri = rows.map(function (row) {
+        const c = row.c;
+        const facutRaw = c[3] ? c[3].v : null; // I = Facut
+        return {
+          proiect: c[0] ? c[0].v : '',
+          task: c[1] ? c[1].v : '',
+          prioritate: c[2] ? c[2].v : 'Mic',
+          raspuns: (facutRaw === 1 || facutRaw === '1') ? 1 : (facutRaw === 0 || facutRaw === '0' ? 0 : null),
+          nota: c[4] ? c[4].v : ''
+        };
+      });
+      randeaza();
+    } catch (e) {
+      document.getElementById('lista').innerHTML = '<div class="eroare">Nu am putut încărca taskurile.<br>' + e + '</div>';
+    }
+  }
+
+  function randeaza() {
+    const cont = document.getElementById('lista');
+    if (!taskuri.length) { cont.innerHTML = '<div class="gol">Nu ai taskuri pentru această zi.</div>'; return; }
+    cont.innerHTML = '';
+    taskuri.forEach(function (t, i) {
+      const div = document.createElement('div');
+      div.className = 'task';
+      div.innerHTML =
+        '<div class="titlu">' + (BULINA[t.prioritate] || '') + ' ' + esc(t.task) + '</div>' +
+        '<div class="meta">' + esc(t.proiect) + '</div>' +
+        '<div class="toggle">' +
+          '<button class="nefacut" data-i="' + i + '" data-v="0">Nefăcut</button>' +
+          '<button class="facut" data-i="' + i + '" data-v="1">Făcut</button>' +
+        '</div>' +
+        '<input class="nota" data-i="' + i + '" placeholder="notă (opțional)" value="' + esc(t.nota || '') + '">';
+      cont.appendChild(div);
+      if (t.raspuns !== null) marcheaza(div, t.raspuns);
+    });
+    cont.querySelectorAll('.toggle button').forEach(function (b) {
+      b.addEventListener('click', function () {
+        const i = +b.dataset.i, v = +b.dataset.v;
+        taskuri[i].raspuns = v;
+        marcheaza(b.closest('.task'), v);
+        verifica();
+      });
+    });
+    cont.querySelectorAll('.nota').forEach(function (inp) {
+      inp.addEventListener('input', function () { taskuri[+inp.dataset.i].nota = inp.value; });
+    });
+    verifica();
+  }
+
+  function marcheaza(taskDiv, v) {
+    taskDiv.querySelector('.facut').classList.toggle('on', v === 1);
+    taskDiv.querySelector('.nefacut').classList.toggle('on', v === 0);
+  }
+
+  function verifica() {
+    const toate = taskuri.every(function (t) { return t.raspuns === 0 || t.raspuns === 1; });
+    document.getElementById('trimite').disabled = !toate;
+  }
+
+  function esc(s) { return String(s).replace(/[&<>"]/g, function (c) {
+    return { '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;' }[c]; }); }
+
+  document.getElementById('trimite').addEventListener('click', async function () {
+    const btn = this; btn.disabled = true;
+    document.getElementById('status').textContent = 'Se trimite…';
+    const payload = {
+      action: 'bife', data: dataStr,
+      items: taskuri.map(function (t) {
+        return { proiect: t.proiect, task: t.task, facut: t.raspuns, nota: t.nota || '' };
+      })
+    };
+    try {
+      await fetch(APPS_SCRIPT_URL, {
+        method: 'POST', mode: 'no-cors',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify(payload)
+      });
+      document.getElementById('status').textContent = '';
+      document.getElementById('lista').innerHTML = '<div class="gol">✅ Salvat! Ne vedem mâine.</div>';
+      btn.textContent = 'Trimis';
+    } catch (e) {
+      document.getElementById('status').textContent = 'Eroare la trimitere. Mai încearcă.';
+      btn.disabled = false;
+    }
+  });
+
+  incarca();
+</script>
+</body>
+</html>
