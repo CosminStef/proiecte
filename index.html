@@ -102,7 +102,7 @@
 
   <section class="kpi-pers" id="kpiPersoane" style="display:none">
     <h2>KPI pe persoană</h2>
-    <p class="hint">Execuție lunară = taskuri făcute / planificate, pentru fiecare persoană implicată în proiecte.</p>
+    <p class="hint">Execuție lunară ponderată pe prioritate (Urgent×3, Mediu×2, Mic×1), per persoană implicată în proiecte.</p>
     <div id="kpiPersBody"></div>
   </section>
 
@@ -112,6 +112,7 @@
     const REFRESH_MS = 60000;
     const GVIZ_URL = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/gviz/tq?tqx=out:csv&sheet=${encodeURIComponent(SHEET_NAME)}`;
     const BIFAJE_URL = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/gviz/tq?tqx=out:csv&sheet=bifaje`;
+    const PONDERI = { "Urgent": 3, "Mediu": 2, "Mic": 1 };
     let taskResp = {}; // "Proiect|Etapa" -> "Responsabil" (din gantt)
 
     const LUNI = ["Ian","Feb","Mar","Apr","Mai","Iun","Iul","Aug","Sep","Oct","Noi","Dec"];
@@ -327,13 +328,14 @@
           const proiect = (r[2] || "").trim();     // C
           const task = (r[3] || "").trim();        // D
           const facut = (r[8] || "").trim();       // I Facut
+          const w = PONDERI[(r[4] || "Mic").trim()] || 1; // E Prioritate -> pondere
           const luna = data.slice(0, 7);
           luniSet.add(luna);
           numePersoane(taskResp[proiect + "|" + task] || "").forEach(function (nume) {
             acc[nume] = acc[nume] || {};
             acc[nume][luna] = acc[nume][luna] || { plan: 0, facut: 0 };
-            acc[nume][luna].plan++;
-            if (facut === "1") acc[nume][luna].facut++;
+            acc[nume][luna].plan += w;
+            if (facut === "1") acc[nume][luna].facut += w;
           });
         }
         randeazaKpiPersoane(acc, [...luniSet].sort());
