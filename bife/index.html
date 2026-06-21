@@ -68,7 +68,7 @@
   }
 
   function gvizUrl() {
-    const q = "select C,D,E,I,J where A = '" + dataStr + "'";
+    const q = "select C,D,E,I,J where A = date '" + dataStr + "'";
     return 'https://docs.google.com/spreadsheets/d/' + SPREADSHEET_ID + '/gviz/tq?gid=' +
            BIFAJE_GID + '&tqx=out:json&tq=' + encodeURIComponent(q);
   }
